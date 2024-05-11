@@ -1,6 +1,4 @@
 .toolbar {
-  display: flex;
-  justify-content: center;
   align-items: center;
   padding: 0 16px;
   height: 64px;
@@ -8,11 +6,25 @@
   color: #0F265C;
 }
 
-.toolbar-icon {
-  margin-right: 10px;
-}
+
 
 .toolbar-title {
-  font-size: 26px;
-  font-weight: 500;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  .toolbar-icon {
+    padding-right: 10px;
+  }
+
+  .title {
+    font-size: 26px;
+    font-weight: 500;
+  }
+
+  :hover {
+    cursor: pointer;
+  }
 }
