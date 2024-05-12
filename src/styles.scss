@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
+$primary-color: #0F265C;
+
 html,
 body {
   height: 100%;
@@ -20,10 +22,27 @@ app-root {
 
 
 .container {
-  margin: 20px;
+  margin: 2em;
 }
 
-/*Flex helpers*/
-.flex-grow-complete{
-  flex-grow: 1;
+
+
+button {
+  color: $primary-color;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: medium;
+  font-weight: bold;
+  padding: 10px 20px;
+
+  &.btn-primary {
+    background-color: #F5DF66;
+
+  }
+
+  &.btn-secondary {
+    background-color: #EAECF2;
+  }
 }
+
