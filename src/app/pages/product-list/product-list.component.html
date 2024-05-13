@@ -1,13 +1,16 @@
-
 <div class="container">
-
   <div class="container-actions">
-    <input type="text" class="search-input" placeholder="Search...">
-    <button class="btn btn-main btn-primary" (click)="onAddProduct()">Agregar</button>
+    <input type="text" class="search-input" placeholder="Search..." />
+    <button class="btn btn-main btn-primary" (click)="onAddProduct()">
+      Agregar
+    </button>
   </div>
 
   <div class="table-product">
-    <app-product-table [products]="products"></app-product-table>
+    <app-product-table
+      [products]="products"
+      (editProduct)="onEditProduct($event)"
+      (deleteProduct)="onDeleteProduct($event)"
+    ></app-product-table>
   </div>
-
 </div>

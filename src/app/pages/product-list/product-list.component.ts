@@ -39,4 +39,12 @@ export class ProductListComponent implements OnInit, OnDestroy {
     }
   }
 
+  onEditProduct(product: Product) {
+    console.log('Edit product', product);
+  }
+
+  onDeleteProduct(product: Product) {
+    console.log('Delete product', product);
+  }
+
 }

@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
 $primary-color: #0F265C;
+$danger-color: #FF0000;
 
 html,
 body {
@@ -51,6 +52,9 @@ button.btn {
   &.btn-action {
     background-color: transparent;
 
+    &.danger {
+      color: $danger-color;
+    }
     &:hover {
       background-color: #F4F6F9;
     }
