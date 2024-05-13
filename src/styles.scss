@@ -52,26 +52,30 @@ button.btn {
         background-color: darken(#F5DF66, 20%);
       }
 
-      &.disabled {
-        background-color: lighten(#F5DF66, 40%); // Aclara el color de fondo cuando está deshabilitado
-        cursor: not-allowed; // Cambia el cursor a un icono de "no permitido"
+      &[disabled] {
+        background-color: lighten(#F5DF66, 40%);
+        cursor: not-allowed;
+        color: #ccc;
+        opacity: 0.6;
       }
     }
 
     &.btn-secondary {
       background-color: #EAECF2;
 
-      &:hover {
-        background-color: darken(#EAECF2, 10%);
-      }
-
       &:active {
         background-color: darken(#EAECF2, 20%);
       }
+    }
 
-      &.disabled {
-        background-color: lighten(#EAECF2, 40%); // Aclara el color de fondo cuando está deshabilitado
-        cursor: not-allowed; // Cambia el cursor a un icono de "no permitido"
+    &[disabled] {
+      background-color: lighten(#EAECF2, 40%);
+      cursor: not-allowed;
+      color: #ccc;
+      opacity: 0.6;
+
+      &:hover {
+        background-color: transparent;
       }
     }
   }

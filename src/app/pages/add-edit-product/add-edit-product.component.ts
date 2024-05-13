@@ -1,25 +1,72 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from "@angular/common";
+import { Component, OnInit, OnDestroy } from "@angular/core";
+import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { ActivatedRoute } from "@angular/router";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-add-edit-product',
+  selector: "app-add-edit-product",
   standalone: true,
-  imports: [],
-  templateUrl: './add-edit-product.component.html',
-  styleUrl: './add-edit-product.component.scss'
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: "./add-edit-product.component.html",
+  styleUrl: "./add-edit-product.component.scss",
 })
-export class AddEditProductComponent {
-
+export class AddEditProductComponent implements OnInit, OnDestroy {
   productId: string | null = null;
+  private releaseDateSubscription?: Subscription;
 
-  constructor(private route: ActivatedRoute) { }
+  form = this.fb.group({
+    id: [
+      "",
+      [Validators.required, Validators.minLength(3), Validators.maxLength(10)],
+    ],
+    name: [
+      "",
+      [Validators.required, Validators.minLength(5), Validators.maxLength(100)],
+    ],
+    description: ["", Validators.required],
+    logo: ["", Validators.required],
+    releaseDate: [new Date(), Validators.required],
+    reviewDate: [{ value: "", disabled: true }],
+  });
+
+  constructor(private route: ActivatedRoute, private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.productId = this.route.snapshot.paramMap.get('id');
+    this.productId = this.route.snapshot.paramMap.get("id");
     if (this.productId) {
-      console.log('Edit');
+      console.log("Edit");
     } else {
-      console.log('New');
+      console.log("New");
     }
+
+    this.subscribeToReleaseDateChanges();
+  }
+
+  ngOnDestroy(): void {
+    if (this.releaseDateSubscription) {
+      this.releaseDateSubscription.unsubscribe();
+    }
+  }
+
+  onSubmit(): void {
+    if (this.form.valid) {
+      console.log(this.form.value);
+    }
+  }
+
+  /**
+   * Subscribe to changes in the releaseDate field of the form.
+   * When the releaseDate changes, set the reviewDate to be one year after the new releaseDate.
+   */
+  private subscribeToReleaseDateChanges(): void {
+    this.form.get("releaseDate")?.valueChanges.subscribe((val) => {
+      if (val) {
+        let reviewDate = new Date(val);
+        reviewDate.setFullYear(reviewDate.getFullYear() + 1);
+        let formattedDate = reviewDate.toISOString().split('T')[0];
+        this.form.get("reviewDate")?.setValue(formattedDate);
+      }
+    });
   }
 }
