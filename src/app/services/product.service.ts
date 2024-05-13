@@ -4,11 +4,16 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Product, ProductPage } from '../models/product.model';
 import { BehaviorSubject, Observable, catchError, map, of, tap, throwError } from 'rxjs';
 
+
+interface StateFilter {
+  itemsPerPage: number;
+  page: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-
 
   BASE_URL = environment.baseUrl;
 
@@ -18,6 +23,8 @@ export class ProductService {
   isLoading = signal(false)
 
   headers = { 'authorId': environment.authId };
+
+  private state = new BehaviorSubject<StateFilter>({ itemsPerPage: 5, page: 1 });
 
   constructor(
     private http: HttpClient,
@@ -45,6 +52,7 @@ export class ProductService {
       return of(this._createProductPage(products, perPage, page));
     }
   }
+
 
   private _createProductPage(products: Product[], perPage: number, page: number): ProductPage {
     const totalItems = products.length;
@@ -81,8 +89,16 @@ export class ProductService {
 
   }
 
+
+  public updateState(newState: Partial<StateFilter>): void {
+    this.state.next({ ...this.state.value, ...newState });
+  }
+
+  public getState(): Observable<StateFilter> {
+    return this.state.asObservable();
+  }
+
+
 }
-function Of(arg0: ProductPage): Observable<ProductPage> {
-  throw new Error('Function not implemented.');
-}
+
 

@@ -16,7 +16,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   productPage: ProductPage = new ProductPage();
 
-  private $productsSub!: Subscription;
+  private $stateSub!: Subscription;
 
 
   constructor(
@@ -25,10 +25,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.$productsSub = this.productService.getProducts(5, 1).subscribe((productPage) => {
-      this.productPage = productPage;
-      console.log('Product page', this.productPage);
-
+    this.$stateSub = this.productService.getState().subscribe((state) => {
+      this.productService.getProducts(state.itemsPerPage, state.page).subscribe((productPage) => {
+        this.productPage = productPage;
+        console.log('Product page', this.productPage);
+      });
     });
   }
 
@@ -36,9 +37,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/product']);
   }
 
-  ngOnDestroy(): void { // Implementa ngOnDestroy
-    if (this.$productsSub) { // Si existe la suscripción
-      this.$productsSub.unsubscribe(); // Desuscríbete
+  ngOnDestroy(): void {
+    if (this.$stateSub) {
+      this.$stateSub.unsubscribe();
     }
   }
 
