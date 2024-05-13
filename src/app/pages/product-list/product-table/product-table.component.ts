@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Renderer2 } from '@angular/core';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { CommonModule } from '@angular/common';
@@ -16,13 +16,20 @@ export class ProductTableComponent {
   @Input() totalProducts: number = 0;
   @Input() totalPages: number = 0;
   currentPage: number = 1;
+
   showMenu: boolean = false;
+  isScreenLarge: boolean = window.innerWidth > 1000;
 
   readonly isLoaded = this.productService.isLoading.asReadonly()
 
   constructor(
     private productService: ProductService,
-  ) {}
+    private renderer: Renderer2
+  ) {
+    this.renderer.listen('window', 'resize', (event) => {
+      this.isScreenLarge = event.target.innerWidth > 900;
+    });
+  }
 
   toggleMenu() {
     this.showMenu = !this.showMenu;

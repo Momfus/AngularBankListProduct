@@ -1,5 +1,3 @@
-<p>product-table works!</p>
-
 
 @if ( isLoaded() ) {
   <h1>LOADING...</h1>
@@ -10,11 +8,11 @@
   <table>
     <thead>
       <tr>
-        <th>Logo</th>
-        <th>Nombre del Producto</th>
-        <th>Description</th>
-        <th>Fecha de liberación</th>
-        <th>Fecha de restruturación</th>
+        <th *ngIf="isScreenLarge" class="column-logo">Logo</th>
+        <th class="column-name">Nombre del Producto</th>
+        <th *ngIf="isScreenLarge" class="column-description">Descripción</th>
+        <th class="column-date">Fecha de liberación</th>
+        <th class="column-date">Fecha de restruturación</th>
         <th></th>
       </tr>
     </thead>
@@ -22,7 +20,7 @@
       @for (product of products; track $index) {
         <tr>
           <!-- Logo -->
-          <td>
+          <td *ngIf="isScreenLarge" class="column-logo">
             @if (product.logo) {
               <img [src]="product.logo" alt="Logo" class="logo">
             }
@@ -32,10 +30,10 @@
           </td>
 
           <!-- String Fields -->
-          <td>{{ product.name | slice:0:20 }}...</td>
-          <td>{{ product.description | slice:0:20 }}...</td>
-          <td>{{ product.date_release | date:'dd/MM/yyyy' }}</td>
-          <td>{{ product.date_revision | date:'dd/MM/yyyy' }}</td>
+          <td class="column-name">{{ product.name }}</td>
+          <td *ngIf="isScreenLarge" class="column-description">{{ product.description}}</td>
+          <td class="column-date">{{ product.date_release | date:'dd/MM/yyyy' }}</td>
+          <td class="column-date">{{ product.date_revision | date:'dd/MM/yyyy' }}</td>
 
           <!-- Action menu -->
           <td>
@@ -54,8 +52,8 @@
   <div class="results">{{ totalProducts }} Resultados</div>
   <!-- Paginator -->
   <div class="paginator">
-    <button (click)="prevPage()">Anterior</button>
+    <button (click)="prevPage()"><</button>
     <span>{{ currentPage }} / {{ totalPages }}</span>
-    <button (click)="nextPage()">Siguiente</button>
+    <button (click)="nextPage()">></button>
   </div>
 }
