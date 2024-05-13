@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environment/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Product } from '../models/product.model';
@@ -15,7 +15,9 @@ export class ProductService {
   productListAux = new BehaviorSubject<Product[]>([]);
   productListFiltered: Product[] = [];
 
-  headers = { 'authorId': '100' };
+  isLoading = signal(false)
+
+  headers = { 'authorId': environment.authId };
 
   constructor(
     private http: HttpClient,
@@ -25,13 +27,17 @@ export class ProductService {
 
 
     if (this.productListAux.getValue().length === 0) {
+      this.isLoading.set(true)
+
       return this.http
         .get<Product[]>(`${this.BASE_URL}`,  { headers: this.headers})
         .pipe(
           catchError((error) => {
+            this.isLoading.set(false)
             return this.handleError(error);
           }),
           tap((products) => {
+            this.isLoading.set(false)
             this.productListAux.next(products);
           })
         );

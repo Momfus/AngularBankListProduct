@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { ProductTableComponent } from './product-table/product-table.component';
 import { Router } from '@angular/router';
+import { Product } from '../../models/product.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -10,7 +12,11 @@ import { Router } from '@angular/router';
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
+
+  products: Product[] = [];
+  private productsSub!: Subscription; // Crea una propiedad para la suscripción
+
 
   constructor(
     private productService: ProductService,
@@ -18,13 +24,19 @@ export class ProductListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe((products) => {
-      console.log(products);
+    this.productsSub = this.productService.getProducts().subscribe((products) => {
+      this.products = products;
     });
   }
 
   onAddProduct() {
     this.router.navigate(['/product']);
+  }
+
+  ngOnDestroy(): void { // Implementa ngOnDestroy
+    if (this.productsSub) { // Si existe la suscripción
+      this.productsSub.unsubscribe(); // Desuscríbete
+    }
   }
 
 }

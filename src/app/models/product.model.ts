@@ -10,3 +10,10 @@ export interface Product {
   date_revision: Date;
 
 }
+
+
+export interface ProductPage {
+  products: Product[];
+  totalProducts: number;
+  totalPages: number;
+}

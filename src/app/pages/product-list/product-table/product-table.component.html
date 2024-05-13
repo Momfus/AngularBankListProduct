@@ -1,1 +1,61 @@
 <p>product-table works!</p>
+
+
+@if ( isLoaded() ) {
+  <h1>LOADING...</h1>
+}
+@else {
+
+  <!-- Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Logo</th>
+        <th>Nombre del Producto</th>
+        <th>Description</th>
+        <th>Fecha de liberación</th>
+        <th>Fecha de restruturación</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (product of products; track $index) {
+        <tr>
+          <!-- Logo -->
+          <td>
+            @if (product.logo) {
+              <img [src]="product.logo" alt="Logo" class="logo">
+            }
+            @else {
+              <div class="logo-placeholder">{{ product.name | slice:0:2 | uppercase }}</div>
+            }
+          </td>
+
+          <!-- String Fields -->
+          <td>{{ product.name | slice:0:20 }}...</td>
+          <td>{{ product.description | slice:0:20 }}...</td>
+          <td>{{ product.date_release | date:'dd/MM/yyyy' }}</td>
+          <td>{{ product.date_revision | date:'dd/MM/yyyy' }}</td>
+
+          <!-- Action menu -->
+          <td>
+            <button (click)="toggleMenu()">...</button>
+            <div *ngIf="showMenu" class="menu">
+              <button>Editar</button>
+              <button>Eliminar</button>
+            </div>
+          </td>
+        </tr>
+      }
+
+    </tbody>
+  </table>
+  <!-- Results -->
+  <div class="results">{{ totalProducts }} Resultados</div>
+  <!-- Paginator -->
+  <div class="paginator">
+    <button (click)="prevPage()">Anterior</button>
+    <span>{{ currentPage }} / {{ totalPages }}</span>
+    <button (click)="nextPage()">Siguiente</button>
+  </div>
+}
