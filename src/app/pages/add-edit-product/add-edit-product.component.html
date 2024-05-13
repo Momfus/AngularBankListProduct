@@ -4,54 +4,75 @@
 
 } @else {
 
-<div class="container">
+<div class="container-form">
   <div class="container-header">
+    <button class="btn btn-action back-button" (click)="onBack()">
+      <img src="assets/chevron_left_20dp.svg" alt="Volver">
+      Volver
+    </button>
     <h1>Formulario de Registro</h1>
   </div>
   <hr />
   <br />
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form-row">
+      <!-- ID -->
       <div class="form-field">
         <label>ID</label>
         <input formControlName="id" />
-        <div *ngIf="form.controls['id'].invalid && form.controls['id'].touched">
-          El campo es requerido y debe tener entre 3 y 10 caracteres.
-        </div>
+        @if (form.controls['id'].invalid && form.controls['id'].touched && !!form.controls['id'].errors) {
+          <div *ngIf="form.controls['id'].errors['required']">El campo es requerido.</div>
+          <div *ngIf="form.controls['id'].errors['minlength']">Debe tener al menos 3 caracteres.</div>
+          <div *ngIf="form.controls['id'].errors['maxlength']">Debe tener máximo 10 caracteres.</div>
+        }
       </div>
+      <!-- Nombre -->
       <div class="form-field">
         <label>Nombre</label>
         <input formControlName="name" />
-        <div
-          *ngIf="form.controls['name'].invalid && form.controls['name'].touched"
-        >
-          El campo es requerido y debe tener entre 5 y 100 caracteres.
-        </div>
+        @if (form.controls['name'].invalid && form.controls['name'].touched && !!form.controls['name'].errors) {
+          <div *ngIf="form.controls['name'].errors['required']">El campo es requerido.</div>
+          <div *ngIf="form.controls['name'].errors['minlength']">Debe tener al menos 5 caracteres.</div>
+          <div *ngIf="form.controls['name'].errors['maxlength']">Debe tener máximo 100 caracteres.</div>
+        }
       </div>
+    </div>
+    <div class="form-row">
+      <!-- Description -->
       <div class="form-field">
         <label>Descripción</label>
         <input formControlName="description" />
-        <div *ngIf="form.controls['description'].invalid && form.controls['description'].touched">
-          El campo es requerido.
-        </div>
+        @if (form.controls['description'].invalid && form.controls['description'].touched && !!form.controls['description'].errors) {
+          <div *ngIf="form.controls['description'].errors['required']">El campo es requerido.</div>
+          <div *ngIf="form.controls['description'].errors['minlength']">Debe tener al menos 10 caracteres.</div>
+          <div *ngIf="form.controls['description'].errors['maxlength']">Debe tener máximo 200 caracteres.</div>
+        }
       </div>
+      <!-- Logo -->
       <div class="form-field">
         <label>Logo</label>
         <input formControlName="logo" />
-        <div *ngIf="form.controls['logo'].invalid && form.controls['logo'].touched">
+        <div
+          *ngIf="form.controls['logo'].invalid && form.controls['logo'].touched"
+        >
           El campo es requerido.
         </div>
       </div>
+    </div>
+    <div class="form-row">
+      <!-- Fecha de liberación -->
       <div class="form-field">
         <label>Fecha de Liberación</label>
-        <input type="date" formControlName="releaseDate" />
-        <div *ngIf="form.controls['releaseDate'].invalid && form.controls['releaseDate'].touched">
-          El campo es requerido.
-        </div>
+        <input type="date" formControlName="releaseDate" [min]="today" />
+        @if (form.controls['releaseDate'].invalid && form.controls['releaseDate'].touched && !!form.controls['releaseDate'].errors) {
+          <div *ngIf="form.controls['releaseDate'].errors['required']">El campo es requerido.</div>
+          <div *ngIf="form.controls['releaseDate'].errors['forbiddenDate']">Debe ser igual o mayor a la fecha actual.</div>
+        }
       </div>
+      <!-- Fecha de revision -->
       <div class="form-field">
         <label>Fecha de Revisión</label>
-        <input type="date" formControlName="reviewDate" [disabled]="true" />
+        <input type="date" formControlName="reviewDate" />
       </div>
     </div>
 
@@ -59,14 +80,14 @@
       <button
         class="btn btn-main btn-secundary"
         type="reset"
-        [disabled]="form.pristine"
+        [class.disabled]="form.pristine"
       >
         Reiniciar
       </button>
       <button
         class="btn btn-main btn-primary"
         type="submit"
-        [disabled]="form.invalid"
+        [class.disabled]="form.invalid"
       >
         Enviar
       </button>

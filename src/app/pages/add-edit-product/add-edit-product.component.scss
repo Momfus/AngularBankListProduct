@@ -1,13 +1,27 @@
+@import '../../../styles.scss';
 
 .container-header {
-
   display: flex;
   justify-content: center;
   align-items: center;
+  color: $primary-color;
+  position: relative;
 
+  .back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    position: absolute;
+    left: 0;
+    background: none;
+    border: none;
+    color: $primary-color;
+    cursor: pointer;
+  }
 }
 
-.container {
+.container-form {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
@@ -29,16 +43,44 @@
 .form-field {
   flex: 1;
   padding: 10px;
+  margin-right: 5em;
 
   @media (max-width: 900px) {
     padding: 0;
     margin-bottom: 10px;
+    margin-right: 1em;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  input {
+    width: 100%;
+    height: 28px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  input.invalid {
+    border-color: red;
+  }
+
+  div {
+    color: red;
+    font-size: 12px;
   }
 }
 
 .form-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 20px;
 }
 

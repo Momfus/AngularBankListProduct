@@ -1,8 +1,9 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule, formatDate } from "@angular/common";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
+import { releaseDateValidator } from "../../../utils/validators";
 
 @Component({
   selector: "app-add-edit-product",
@@ -13,7 +14,8 @@ import { Subscription } from "rxjs";
 })
 export class AddEditProductComponent implements OnInit, OnDestroy {
   productId: string | null = null;
-  private releaseDateSubscription?: Subscription;
+  private $releaseDateSubscription?: Subscription;
+  today: String;
 
   form = this.fb.group({
     id: [
@@ -24,13 +26,15 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
       "",
       [Validators.required, Validators.minLength(5), Validators.maxLength(100)],
     ],
-    description: ["", Validators.required],
+    description: ["", [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
     logo: ["", Validators.required],
-    releaseDate: [new Date(), Validators.required],
+    releaseDate: [new Date(), [Validators.required, releaseDateValidator()]],
     reviewDate: [{ value: "", disabled: true }],
   });
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router) {
+    this.today = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+  }
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get("id");
@@ -44,15 +48,21 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.releaseDateSubscription) {
-      this.releaseDateSubscription.unsubscribe();
+    if (this.$releaseDateSubscription) {
+      this.$releaseDateSubscription.unsubscribe();
     }
   }
 
   onSubmit(): void {
     if (this.form.valid) {
       console.log(this.form.value);
+    } else {
+      console.error("Form is invalid");
     }
+  }
+
+  onBack(): void {
+    this.router.navigate(['/home']);
   }
 
   /**
@@ -69,4 +79,5 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 }

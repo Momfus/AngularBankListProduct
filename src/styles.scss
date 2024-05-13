@@ -2,12 +2,17 @@
 
 $primary-color: #0F265C;
 $danger-color: #FF0000;
+$button-primary-color: #F5DF66;
+$button-secondary-color: #EAECF2;
 
 html,
 body {
   height: 100%;
   box-sizing: border-box;
   margin: 0;
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  letter-spacing: 0.5px;
 }
 
 body {
@@ -42,40 +47,45 @@ button.btn {
     transition: all 0.3s ease;
 
     &.btn-primary {
-      background-color: #F5DF66;
+      background-color: $button-primary-color;
 
       &:hover {
-        background-color: darken(#F5DF66, 10%);
+        background-color: darken($button-primary-color, 10%);
       }
 
       &:active {
-        background-color: darken(#F5DF66, 20%);
+        background-color: darken($button-primary-color, 20%);
       }
 
-      &[disabled] {
-        background-color: lighten(#F5DF66, 40%);
+      &.disabled {
         cursor: not-allowed;
-        color: #ccc;
         opacity: 0.6;
+
+        &:hover,
+        &:active {
+          background-color: $button-primary-color;
+        }
       }
+
     }
 
     &.btn-secondary {
-      background-color: #EAECF2;
+      background-color: $button-secondary-color;
 
       &:active {
-        background-color: darken(#EAECF2, 20%);
+        background-color: darken($button-secondary-color, 20%);
       }
     }
 
-    &[disabled] {
-      background-color: lighten(#EAECF2, 40%);
+    &.disabled {
       cursor: not-allowed;
-      color: #ccc;
       opacity: 0.6;
 
       &:hover {
-        background-color: transparent;
+        &:hover,
+        &:active {
+          background-color: $button-secondary-color;
+        }
       }
     }
   }
