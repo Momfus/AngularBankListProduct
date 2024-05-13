@@ -60,31 +60,6 @@ table {
 
 }
 
-// Action menu
-.dots-menu-button {
-  background: none;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 12px;
-}
-
-
-div.menu-options {
-  position: absolute;
-  top: -10px;
-
-  display: flex;
-  flex-direction: column;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 10px;
-  z-index: 10;
-
-}
-
-
 // Logo
 .logo, .logo-placeholder {
   border-radius: 50%;
@@ -105,15 +80,12 @@ div.menu-options {
   align-items: center;
 }
 
-
-// Table footer
-.results {
-  text-align: left;
-  font-size: small;
-}
-
-.paginator {
+// Action menu
+.dots-menu-button {
+  background: none;
+  border: none;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 12px;
 }

@@ -1,0 +1,64 @@
+@if ( isLoaded() ) {
+<h1>LOADING...</h1>
+} @else {
+
+  <!-- Table -->
+  <div class="table-product">
+    <table>
+      <thead>
+        <tr>
+          <th *ngIf="isScreenLarge" class="column-logo">Logo</th>
+          <th class="column-name">Nombre del Producto</th>
+          <th *ngIf="isScreenLarge" class="column-description">Descripción</th>
+          <th class="column-date">Fecha de liberación</th>
+          <th class="column-date">Fecha de restruturación</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (product of products; track $index) {
+        <tr>
+          <!-- Logo -->
+          <td *ngIf="isScreenLarge" class="column-logo">
+            @if (product.logo) {
+            <img [src]="product.logo" alt="Logo" class="logo" />
+            } @else {
+            <div class="logo-placeholder">
+              {{ product.name | slice : 0 : 2 | uppercase }}
+            </div>
+            }
+          </td>
+
+          <!-- String Fields -->
+          <td class="column-name">{{ product.name }}</td>
+          <td *ngIf="isScreenLarge" class="column-description">
+            {{ product.description }}
+          </td>
+          <td class="column-date">
+            {{ product.date_release | date : "dd/MM/yyyy" }}
+          </td>
+          <td class="column-date">
+            {{ product.date_revision | date : "dd/MM/yyyy" }}
+          </td>
+
+          <!-- Action menu -->
+          <td>
+            <button class="btn btn-action" (click)="toggleMenu(product, $event.target)">
+              <img src="assets/more_vert_20dp.svg" alt="Menu" />
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <hr />
+
+  <app-product-table-footer [pagination]="pagination"></app-product-table-footer>
+
+}
+
+@if (selectedProduct ) {
+  <app-table-action-menu [menuPosition]="menuPosition" (editProduct)="onEditProduct(selectedProduct)" (deleteProduct)="onDeleteProduct(selectedProduct)"></app-table-action-menu>
+}

@@ -1,12 +1,10 @@
 import { Component, EventEmitter, Input, Output, Renderer2 } from '@angular/core';
-import { Product } from '../../../models/product.model';
-import { ProductService } from '../../../services/product.service';
-import { CommonModule } from '@angular/common';
+import { Pagination, Product } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
+import { Position } from '../../models/miscellaneous.model';
 
 @Component({
   selector: 'app-product-table',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './product-table.component.html',
   styleUrl: './product-table.component.scss',
 })
@@ -14,9 +12,8 @@ export class ProductTableComponent {
 
   readonly isLoaded = this.productService.isLoading.asReadonly()
 
-  @Input() products: Product[] = [];
-  @Input() totalProducts: number = 0;
-  @Input() totalPages: number = 0;
+  @Input() products!: Product[] | undefined;
+  @Input() pagination!: Pagination | undefined;
   @Output() editProduct = new EventEmitter();
   @Output() deleteProduct = new EventEmitter();
 
@@ -24,7 +21,7 @@ export class ProductTableComponent {
   selectedProduct: Product | null = null;
 
   isScreenLarge: boolean = window.innerWidth > 1000;
-  menuPosition = { top: 0, left: 0 };
+  menuPosition: Position = { top: 0, left: 0 };
 
   constructor(
     private productService: ProductService,
@@ -51,19 +48,6 @@ export class ProductTableComponent {
       this.menuPosition = { top: rect.top, left: rect.left };
     }
   }
-
-  prevPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
-  }
-
-  nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
-    }
-  }
-
 
   onEditProduct(product: Product) {
     this.selectedProduct = null;

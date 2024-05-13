@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { environment } from '../../environment/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Product } from '../models/product.model';
-import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
+import { Product, ProductPage } from '../models/product.model';
+import { BehaviorSubject, Observable, catchError, map, of, tap, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,30 +23,46 @@ export class ProductService {
     private http: HttpClient,
   ) { }
 
-  public getProducts(perPage: number = 5, offset: number = 0): Observable<Product[]> {
-
-
+  public getProducts(perPage: number = 5, page: number = 1): Observable<ProductPage> {
     if (this.productListAux.getValue().length === 0) {
-      this.isLoading.set(true)
+      this.isLoading.set(true);
 
       return this.http
-        .get<Product[]>(`${this.BASE_URL}`,  { headers: this.headers})
+        .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
         .pipe(
           catchError((error) => {
-            this.isLoading.set(false)
+            this.isLoading.set(false);
             return this.handleError(error);
           }),
           tap((products) => {
-            this.isLoading.set(false)
+            this.isLoading.set(false);
             this.productListAux.next(products);
-          })
+          }),
+          map((products) => this._createProductPage(products, perPage, page))
         );
     } else {
-      return this.productListAux.asObservable();
+      const products = this.productListAux.getValue();
+      return of(this._createProductPage(products, perPage, page));
     }
-
   }
 
+  private _createProductPage(products: Product[], perPage: number, page: number): ProductPage {
+    const totalItems = products.length;
+    const totalPages = Math.ceil(totalItems / perPage);
+    const currentPage = page;
+    const offset = (page - 1) * perPage;
+    const items = products.slice(offset, offset + perPage);
+
+    return {
+      products: items,
+      pagination: {
+        currentPage,
+        itemsPerPage: perPage,
+        totalItems,
+        totalPages
+      }
+    };
+  }
 
   private handleError(errorRes: HttpErrorResponse) {
     let errorMessage = "An unknown error ocurred!";
@@ -66,3 +82,7 @@ export class ProductService {
   }
 
 }
+function Of(arg0: ProductPage): Observable<ProductPage> {
+  throw new Error('Function not implemented.');
+}
+

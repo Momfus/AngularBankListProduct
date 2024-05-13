@@ -1,21 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ProductService } from '../../services/product.service';
-import { ProductTableComponent } from './product-table/product-table.component';
 import { Router } from '@angular/router';
-import { Product } from '../../models/product.model';
+import { Product, ProductPage } from '../../models/product.model';
 import { Subscription } from 'rxjs';
+import { ProductTableModule } from '../../components/product-table/product-table.module';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [ProductTableComponent],
+  imports: [ProductTableModule],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
 export class ProductListComponent implements OnInit, OnDestroy {
 
-  products: Product[] = [];
-  private productsSub!: Subscription; // Crea una propiedad para la suscripción
+  productPage: ProductPage = new ProductPage();
+
+  private $productsSub!: Subscription;
 
 
   constructor(
@@ -24,8 +25,10 @@ export class ProductListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.productsSub = this.productService.getProducts().subscribe((products) => {
-      this.products = products;
+    this.$productsSub = this.productService.getProducts(5, 1).subscribe((productPage) => {
+      this.productPage = productPage;
+      console.log('Product page', this.productPage);
+
     });
   }
 
@@ -34,8 +37,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void { // Implementa ngOnDestroy
-    if (this.productsSub) { // Si existe la suscripción
-      this.productsSub.unsubscribe(); // Desuscríbete
+    if (this.$productsSub) { // Si existe la suscripción
+      this.$productsSub.unsubscribe(); // Desuscríbete
     }
   }
 
