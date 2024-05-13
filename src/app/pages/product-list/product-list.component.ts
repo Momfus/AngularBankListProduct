@@ -14,8 +14,9 @@ import { ProductTableModule } from '../../components/product-table/product-table
 })
 export class ProductListComponent implements OnInit, OnDestroy {
 
-  productPage: ProductPage = new ProductPage();
+  readonly isLoaded = this.productService.isLoading.asReadonly()
 
+  productPage: ProductPage = new ProductPage();
   private $stateSub!: Subscription;
 
 

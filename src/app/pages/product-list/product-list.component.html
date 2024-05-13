@@ -1,7 +1,16 @@
 <div class="container">
   <div class="container-actions">
-    <input type="text" class="search-input" placeholder="Buscar..." />
-    <button class="btn btn-main btn-primary" (click)="onAddProduct()">
+    <input
+      type="text"
+      class="search-input"
+      [class.disabled]="isLoaded()"
+      placeholder="Buscar..."
+    />
+    <button
+      class="btn btn-main btn-primary"
+      [class.disabled]="isLoaded()"
+      (click)="onAddProduct()"
+    >
       Agregar
     </button>
   </div>
