@@ -16,6 +16,10 @@
   justify-content: center;
   align-items: center;
   order: 2;
+
+  .btn.btn-action.current-page {
+    text-decoration: underline;
+  }
 }
 
 .select-container {
@@ -51,3 +55,5 @@
     text-align: center;
   }
 }
+
+

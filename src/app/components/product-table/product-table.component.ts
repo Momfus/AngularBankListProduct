@@ -59,5 +59,9 @@ export class ProductTableComponent {
     this.deleteProduct.emit(product);
   }
 
+  onPageChange(page: number) {
+    this.productService.changePage(page);
+  }
+
 
 }

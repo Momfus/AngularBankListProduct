@@ -7,7 +7,16 @@ table {
   border-collapse: collapse;
 
   thead {
+    color: #535457;
+    font-size: small;
+    font-weight: bolder;
+    background-color: #F9FAFC;
     border-bottom: 1px solid #000;
+    height: 4em;
+
+    th:first-child {
+      padding-left: 3em;
+    }
 
     th {
       text-align: left;
@@ -16,7 +25,7 @@ table {
 
       &.column-logo,
       &.column-date {
-        width: 100px;
+        width: 150px;
       }
 
       &.column-name {
@@ -31,8 +40,17 @@ table {
   }
 
   tbody {
+
     tr {
       border-bottom: 1px solid #F4F6F9;
+
+      td:first-child {
+        padding-left: 2em;
+      }
+
+      td:last-child {
+        text-align: right;
+      }
 
       td {
         padding: 0.5em 0em;

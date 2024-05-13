@@ -89,11 +89,22 @@ export class ProductService {
 
   }
 
-
-  public updateState(newState: Partial<StateFilter>): void {
-    this.state.next({ ...this.state.value, ...newState });
+  public changePage(page: number): void {
+    this.updateState({ page });
+    this.getProducts(this.state.value.itemsPerPage, page).subscribe();
   }
 
+
+  public updateState(newState: Partial<StateFilter>): void {
+    const updatedState = { ...this.state.value, ...newState };
+    const totalPages = Math.ceil(this.productListAux.getValue().length / updatedState.itemsPerPage);
+
+    if (updatedState.page > totalPages) {
+      updatedState.page = totalPages;
+    }
+
+    this.state.next(updatedState);
+  }
   public getState(): Observable<StateFilter> {
     return this.state.asObservable();
   }

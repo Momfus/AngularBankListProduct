@@ -12,9 +12,9 @@ export class HeaderComponent {
 
   @Input() title: string = '';
 
-  constructor(private router: Router) { } // Inyecta el servicio Router
+  constructor(private router: Router) { }
 
-  navigateToHome() { // Añade un método para navegar a la ruta /home
+  navigateToHome() {
     this.router.navigate(['/home']);
   }
 
