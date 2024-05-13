@@ -27,22 +27,62 @@ app-root {
 
 
 
-button {
+button.btn {
   color: $primary-color;
   border: none;
-  border-radius: 5px;
+
   cursor: pointer;
   font-size: medium;
   font-weight: bold;
   padding: 10px 20px;
 
-  &.btn-primary {
-    background-color: #F5DF66;
+  &.btn-main {
+    border-radius: 5px;
+    &.btn-primary {
+      background-color: #F5DF66;
 
+    }
+
+    &.btn-secondary {
+      background-color: #EAECF2;
+    }
   }
 
-  &.btn-secondary {
-    background-color: #EAECF2;
+  &.btn-action {
+    background-color: transparent;
+
+    &:hover {
+      background-color: #F4F6F9;
+    }
   }
+}
+
+
+hr {
+  border: none;
+  border-top: 2px solid #F4F6F9;
+  color: #F4F6F9;
+  background-color: #F4F6F9;
+}
+
+
+/* Scrollbar style */
+::-webkit-scrollbar {
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 

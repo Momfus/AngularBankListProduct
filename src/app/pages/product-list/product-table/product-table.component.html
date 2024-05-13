@@ -1,10 +1,9 @@
-
 @if ( isLoaded() ) {
-  <h1>LOADING...</h1>
-}
-@else {
+<h1>LOADING...</h1>
+} @else {
 
-  <!-- Table -->
+<!-- Table -->
+<div class="table-product">
   <table>
     <thead>
       <tr>
@@ -18,42 +17,54 @@
     </thead>
     <tbody>
       @for (product of products; track $index) {
-        <tr>
-          <!-- Logo -->
-          <td *ngIf="isScreenLarge" class="column-logo">
-            @if (product.logo) {
-              <img [src]="product.logo" alt="Logo" class="logo">
-            }
-            @else {
-              <div class="logo-placeholder">{{ product.name | slice:0:2 | uppercase }}</div>
-            }
-          </td>
+      <tr>
+        <!-- Logo -->
+        <td *ngIf="isScreenLarge" class="column-logo">
+          @if (product.logo) {
+          <img [src]="product.logo" alt="Logo" class="logo" />
+          } @else {
+          <div class="logo-placeholder">
+            {{ product.name | slice : 0 : 2 | uppercase }}
+          </div>
+          }
+        </td>
 
-          <!-- String Fields -->
-          <td class="column-name">{{ product.name }}</td>
-          <td *ngIf="isScreenLarge" class="column-description">{{ product.description}}</td>
-          <td class="column-date">{{ product.date_release | date:'dd/MM/yyyy' }}</td>
-          <td class="column-date">{{ product.date_revision | date:'dd/MM/yyyy' }}</td>
+        <!-- String Fields -->
+        <td class="column-name">{{ product.name }}</td>
+        <td *ngIf="isScreenLarge" class="column-description">
+          {{ product.description }}
+        </td>
+        <td class="column-date">
+          {{ product.date_release | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="column-date">
+          {{ product.date_revision | date : "dd/MM/yyyy" }}
+        </td>
 
-          <!-- Action menu -->
-          <td>
-            <button (click)="toggleMenu()">...</button>
-            <div *ngIf="showMenu" class="menu">
-              <button>Editar</button>
-              <button>Eliminar</button>
-            </div>
-          </td>
-        </tr>
+        <!-- Action menu -->
+        <td>
+          <button class="btn btn-action" (click)="toggleMenu()">
+            <img src="assets/more_vert_20dp.svg" alt="Menu" />
+          </button>
+          <div *ngIf="showMenu" class="menu">
+            <button>Editar</button>
+            <button>Eliminar</button>
+          </div>
+        </td>
+      </tr>
       }
-
     </tbody>
   </table>
-  <!-- Results -->
-  <div class="results">{{ totalProducts }} Resultados</div>
-  <!-- Paginator -->
-  <div class="paginator">
-    <button (click)="prevPage()"><</button>
-    <span>{{ currentPage }} / {{ totalPages }}</span>
-    <button (click)="nextPage()">></button>
-  </div>
+</div>
+
+<hr />
+<!-- Results -->
+<div class="results">{{ totalProducts }} Resultados</div>
+<!-- Paginator -->
+<div class="paginator">
+  <button class="btn btn-action" (click)="prevPage()"><</button>
+  <span style="margin: 0em 0.5em">{{ currentPage }} / {{ totalPages }}</span>
+  <button class="btn btn-action" (click)="nextPage()">></button>
+</div>
+
 }

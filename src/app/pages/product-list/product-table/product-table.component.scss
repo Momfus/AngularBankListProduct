@@ -1,3 +1,7 @@
+.table-product{
+  overflow-x: auto;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -28,7 +32,7 @@ table {
 
   tbody {
     tr {
-      border-bottom: 1px solid #f1f1f1;
+      border-bottom: 1px solid #F4F6F9;
 
       td {
         padding: 0.5em 0em;
@@ -55,6 +59,16 @@ table {
   }
 
 }
+
+.dots-menu-button {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 12px; // Ajusta este valor según tus necesidades
+}
+
 
 // Logo
 .logo, .logo-placeholder {
@@ -102,8 +116,5 @@ table {
     text-decoration: none;
     display: block;
 
-    &:hover {
-      background-color: #f1f1f1;
-    }
   }
 }

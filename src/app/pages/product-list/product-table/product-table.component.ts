@@ -1,4 +1,4 @@
-import { Component, Input, Renderer2 } from '@angular/core';
+import { Component, Input, Renderer2, ViewEncapsulation } from '@angular/core';
 import { Product } from '../../../models/product.model';
 import { ProductService } from '../../../services/product.service';
 import { CommonModule } from '@angular/common';
@@ -8,7 +8,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './product-table.component.html',
-  styleUrl: './product-table.component.scss'
+  styleUrl: './product-table.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class ProductTableComponent {
 
