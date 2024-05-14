@@ -39,6 +39,11 @@ export class ProductTableComponent {
         this.selectedProduct = null;
       }
     });
+
+    // Listener to close menu when scrolling
+    this.renderer.listen('window', 'scroll', () => {
+      this.selectedProduct = null;
+    });
   }
 
   toggleMenu(product: Product, target: EventTarget | null) {

@@ -53,10 +53,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.productService.deleteProduct(product.id).subscribe({
       next: () => {
         console.log('Product deleted', product);
-        // const index = this.productPage.products.findIndex(p => p.id === product.id);
-        // if (index !== -1) {
-        //   this.productPage.products.splice(index, 1);
-        // }
         this.productService.changePage(1);
       },
       error: (error) => {
