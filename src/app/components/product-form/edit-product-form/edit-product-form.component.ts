@@ -18,8 +18,6 @@ export class EditProductFormComponent {
   @Input() productId!: string;
   @Output() submitForm: EventEmitter<Product> = new EventEmitter<Product>();
 
-  readonly isLoading = this.productService.isLoading.asReadonly()
-
   today!: string;
   initialProductValues!: Product;
 
@@ -68,16 +66,16 @@ export class EditProductFormComponent {
 
   onSubmit(): void {
 
-    if (this.form.invalid ) {
+    if (this.form.invalid || this.form.pristine ) {
       return;
     }
 
     const formValue = this.form.value;
     const product: Product = {
-      id: formValue.id || '',
-      name: formValue.name || '',
-      description: formValue.description || '',
-      logo: formValue.logo || '',
+      id: this.productId,
+      name: (formValue.name || '').trim(),
+      description: (formValue.description || '').trim(),
+      logo: (formValue.logo || '').trim(),
       date_release: new Date(formValue.date_release || Date.now()),
       date_revision: new Date(formValue.date_revision || Date.now()),
     };
@@ -108,7 +106,7 @@ export class EditProductFormComponent {
 
   setFormDefaultValue(product: Product) {
     this.form.patchValue({
-      id: product.id,
+      id: this.productId,
       name: product.name,
       description: product.description,
       logo: product.logo,

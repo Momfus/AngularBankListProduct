@@ -55,7 +55,13 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
   }
 
   onEditProduct(product: Product): void {
-
+    this.productService.editProduct(product).subscribe({
+      next: () => {
+        this.productService.changePage(1);
+        this.router.navigate(['/home'])
+      },
+      error: (error) => console.error('Error al editar producto:', error)
+    });
   }
 
 }

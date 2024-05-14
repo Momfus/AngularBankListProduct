@@ -74,10 +74,10 @@ export class AddProductFormComponent implements OnInit {
 
     const formValue = this.form.value;
     const product: Product = {
-      id: formValue.id || '',
-      name: formValue.name || '',
-      description: formValue.description || '',
-      logo: formValue.logo || '',
+      id: (formValue.id || '').trim(),
+      name: (formValue.name || '').trim(),
+      description: (formValue.description || '').trim(),
+      logo: (formValue.logo || '').trim(),
       date_release: new Date(formValue.date_release || Date.now()),
       date_revision: new Date(formValue.date_revision || Date.now()),
     };

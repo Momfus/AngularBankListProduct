@@ -7,16 +7,13 @@ import {
   Observable,
   catchError,
   concatMap,
-  delay,
   map,
-  mapTo,
   of,
-  switchMap,
   tap,
   throwError,
 } from "rxjs";
 
-interface StateFilter {
+interface StatePage {
   itemsPerPage: number;
   page: number;
 }
@@ -35,7 +32,7 @@ export class ProductService {
 
   headers = { authorId: environment.authId };
 
-  private state = new BehaviorSubject<StateFilter>({
+  private state = new BehaviorSubject<StatePage>({
     itemsPerPage: 5,
     page: 1,
   });
@@ -93,6 +90,33 @@ export class ProductService {
             this.state.value.itemsPerPage,
             this.state.value.page
           ).subscribe();
+        })
+      );
+  }
+
+  public editProduct(product: Product): Observable<Product> {
+    this.isLoading.set(true);
+
+    return this.http
+      .put<Product>(`${this.BASE_URL}`, product, { headers: this.headers })
+      .pipe(
+        catchError((error) => {
+          this.isLoading.set(false);
+          return this.handleError(error);
+        }),
+        tap((updatedProduct) => {
+          this.isLoading.set(false);
+          const currentProductList = this.$productListAux.getValue();
+          const index = currentProductList.findIndex(p => p.id === updatedProduct.id);
+          if (index !== -1) {
+            currentProductList[index] = updatedProduct;
+            this.$productListAux.next(currentProductList);
+            this.updateState(this.state.value);
+            this.getProducts(
+              this.state.value.itemsPerPage,
+              this.state.value.page
+            ).subscribe();
+          }
         })
       );
   }
@@ -167,7 +191,7 @@ export class ProductService {
     this.getProducts(this.state.value.itemsPerPage, page).subscribe();
   }
 
-  public updateState(newState: Partial<StateFilter>): void {
+  public updateState(newState: Partial<StatePage>): void {
     const updatedState = { ...this.state.value, ...newState };
     const totalPages = Math.ceil(
       this.$productListAux.getValue().length / updatedState.itemsPerPage
@@ -180,7 +204,7 @@ export class ProductService {
     this.state.next(updatedState);
   }
 
-  public getState(): Observable<StateFilter> {
+  public getState(): Observable<StatePage> {
     return this.state.asObservable();
   }
 

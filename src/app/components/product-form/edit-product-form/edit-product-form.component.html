@@ -67,7 +67,7 @@
     <button
       class="btn btn-main btn-primary"
       type="submit"
-      [class.disabled]="form.invalid"
+      [class.disabled]="form.invalid || form.pristine"
     >
       Editar
     </button>
