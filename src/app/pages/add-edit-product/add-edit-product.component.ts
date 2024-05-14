@@ -6,11 +6,12 @@ import { Subscription } from "rxjs";
 import { releaseDateValidator } from "../../../utils/validators";
 import { Product } from "../../models/product.model";
 import { ProductService } from "../../services/product.service";
+import { SpinnerComponent } from "../../shared/spinner/spinner.component";
 
 @Component({
   selector: "app-add-edit-product",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
   templateUrl: "./add-edit-product.component.html",
   styleUrl: "./add-edit-product.component.scss",
 })

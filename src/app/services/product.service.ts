@@ -41,26 +41,21 @@ export class ProductService {
     perPage: number = 5,
     page: number = 1
   ): Observable<ProductPage> {
-    if (this.productListAux.getValue().length === 0) {
-      this.isLoading.set(true);
+    this.isLoading.set(true);
 
-      return this.http
-        .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
-        .pipe(
-          catchError((error) => {
-            this.isLoading.set(false);
-            return this.handleError(error);
-          }),
-          tap((products) => {
-            this.isLoading.set(false);
-            this.productListAux.next(products);
-          }),
-          map((products) => this._createProductPage(products, perPage, page))
-        );
-    } else {
-      const products = this.productListAux.getValue();
-      return of(this._createProductPage(products, perPage, page));
-    }
+    return this.http
+      .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
+      .pipe(
+        catchError((error) => {
+          this.isLoading.set(false);
+          return this.handleError(error);
+        }),
+        tap((products) => {
+          this.isLoading.set(false);
+          this.productListAux.next(products);
+        }),
+        map((products) => this._createProductPage(products, perPage, page))
+      );
   }
 
   public createProduct(product: Product): Observable<Product> {

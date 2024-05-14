@@ -16,8 +16,6 @@ export class ProductTableFooterComponent implements OnInit {
   constructor(private productService: ProductService) {}
 
   ngOnInit() {
-    console.log(this.pagination?.itemsPerPage);
-
     this.defaultPerPageValue = this.pagination?.itemsPerPage || 10;
   }
 
