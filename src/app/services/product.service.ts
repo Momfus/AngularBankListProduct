@@ -45,7 +45,7 @@ export class ProductService {
     if (this.productListAux.getValue().length > 0) {
       return of(this._createProductPage(this.productListAux.getValue(), perPage, page));
     }
-    console.log('test > ');
+
     this.isLoading.set(true);
 
     return this.http

@@ -87,7 +87,7 @@ export class AddProductFormComponent implements OnInit {
 
   }
 
-onReset(event: Event): void {
+  onReset(event: Event): void {
 
     event.preventDefault();
     if (this.form.pristine) {
