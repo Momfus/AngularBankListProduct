@@ -1,7 +1,23 @@
+
+@if (showConfirmationDeleteModal) {
+  <app-modal-confirmation [product]="productToDeleteAux" (confirm)="onDeleteProduct($event)" (cancel)="showConfirmationDeleteModal = false"></app-modal-confirmation>
+}
+
 <div class="container">
   <div class="container-actions">
-    <input type="text" class="search-input" placeholder="Buscar..." />
-    <button class="btn btn-main btn-primary" (click)="onAddProduct()">
+    <input
+      #searchInput
+      type="text"
+      class="search-input"
+      [class.disabled]="isLoaded()"
+      placeholder="Buscar por nombre..."
+      (input)="onSearch(searchInput.value)"
+    />
+    <button
+      class="btn btn-main btn-primary"
+      [class.disabled]="isLoaded()"
+      (click)="onAddProduct()"
+    >
       Agregar
     </button>
   </div>
@@ -11,7 +27,7 @@
       [products]="productPage.products"
       [pagination]="productPage.pagination"
       (editProduct)="onEditProduct($event)"
-      (deleteProduct)="onDeleteProduct($event)"
+      (deleteProduct)="onShowConfirmationDelteModal($event)"
     ></app-product-table>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { Pagination } from "../../../models/product.model";
 import { ProductService } from "../../../services/product.service";
 
@@ -7,13 +7,17 @@ import { ProductService } from "../../../services/product.service";
   templateUrl: "./product-table-footer.component.html",
   styleUrl: "./product-table-footer.component.scss",
 })
-export class ProductTableFooterComponent {
+export class ProductTableFooterComponent implements OnInit {
   @Input() pagination: Pagination | undefined;
   @Output() changePage = new EventEmitter();
 
   itemsPerPageOptions = [5, 10, 20];
-
+  defaultPerPageValue!: number;
   constructor(private productService: ProductService) {}
+
+  ngOnInit() {
+    this.defaultPerPageValue = this.pagination?.itemsPerPage || 10;
+  }
 
   onPrevPage() {
     if (this.pagination && this.pagination.currentPage > 1) {
@@ -22,7 +26,10 @@ export class ProductTableFooterComponent {
   }
 
   onNextPage() {
-    if (this.pagination && this.pagination.currentPage < this.pagination.totalPages) {
+    if (
+      this.pagination &&
+      this.pagination.currentPage < this.pagination.totalPages
+    ) {
       this.changePage.emit(this.pagination.currentPage + 1);
     }
   }
@@ -32,8 +39,25 @@ export class ProductTableFooterComponent {
     const totalPages = this.pagination?.totalPages || 1;
     const pageNumbers = [];
 
-    for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
-      pageNumbers.push(i);
+    pageNumbers.push(1);
+
+
+    if (currentPage > 2) {
+      pageNumbers.push('...');
+    }
+
+
+    if (currentPage > 1 && currentPage < totalPages) {
+      pageNumbers.push(currentPage);
+    }
+
+
+    if (currentPage < totalPages - 1) {
+      pageNumbers.push('...');
+    }
+
+    if (totalPages > 1) {
+      pageNumbers.push(totalPages);
     }
 
     return pageNumbers;
@@ -45,7 +69,9 @@ export class ProductTableFooterComponent {
     this.productService.updateState({ itemsPerPage });
   }
 
-  onPageNumberClick(page: number) {
-    this.changePage.emit(page);
+  onPageNumberClick(page: number | string) {
+    if (typeof page === 'number') {
+      this.changePage.emit(page);
+    }
   }
 }

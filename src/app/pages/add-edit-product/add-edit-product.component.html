@@ -1,10 +1,26 @@
-@if(productId) {
-
-  <h1>Edit product</h1>
-
+@if (isLoading()) {
+  <app-spinner></app-spinner>
 }
-@else {
 
-  <h1>New product</h1>
+<div class="container-form">
+  <div class="container-header">
+    <button class="btn btn-action back-button" (click)="onBack()">
+      <img src="assets/chevron_left_20dp.svg" alt="Volver">
+      Volver
+    </button>
+    <h1>{{title}}</h1>
+  </div>
+  <hr />
+  <br />
+  @if(productId) {
 
-}
+    <app-edit-product-form [productId]="productId" (submitForm)="onEditProduct($event)"></app-edit-product-form>
+
+  } @else {
+
+    <app-add-product-form (submitForm)="onAddProduct($event)"></app-add-product-form>
+
+  }
+
+</div>
+

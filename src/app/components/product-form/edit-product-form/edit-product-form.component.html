@@ -1,0 +1,75 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form-row">
+    <!-- ID -->
+    <div class="form-field field-disabled">
+      <label>ID</label>
+      <input formControlName="id" class="input-disabled"/>
+    </div>
+    <!-- Nombre -->
+    <div class="form-field">
+      <label>Nombre</label>
+      <input formControlName="name" />
+      @if (form.controls['name'].invalid && form.controls['name'].touched && !!form.controls['name'].errors) {
+        <div *ngIf="form.controls['name'].errors['required']">El campo es requerido.</div>
+        <div *ngIf="form.controls['name'].errors['minlength']">Debe tener al menos 5 caracteres.</div>
+        <div *ngIf="form.controls['name'].errors['maxlength']">Debe tener máximo 100 caracteres.</div>
+      }
+    </div>
+  </div>
+  <div class="form-row">
+    <!-- Description -->
+    <div class="form-field">
+      <label>Descripción</label>
+      <input formControlName="description" />
+      @if (form.controls['description'].invalid && form.controls['description'].touched && !!form.controls['description'].errors) {
+        <div *ngIf="form.controls['description'].errors['required']">El campo es requerido.</div>
+        <div *ngIf="form.controls['description'].errors['minlength']">Debe tener al menos 10 caracteres.</div>
+        <div *ngIf="form.controls['description'].errors['maxlength']">Debe tener máximo 200 caracteres.</div>
+      }
+    </div>
+    <!-- Logo -->
+    <div class="form-field">
+      <label>Logo</label>
+      <input formControlName="logo" />
+      <div
+        *ngIf="form.controls['logo'].invalid && form.controls['logo'].touched"
+      >
+        El campo es requerido.
+      </div>
+    </div>
+  </div>
+  <div class="form-row">
+    <!-- Fecha de liberación -->
+    <div class="form-field">
+      <label>Fecha de Liberación</label>
+      <input type="date" formControlName="date_release" [min]="today" />
+      @if (form.controls['date_release'].invalid && form.controls['date_release'].touched && !!form.controls['date_release'].errors) {
+        <div *ngIf="form.controls['date_release'].errors['required']">El campo es requerido.</div>
+        <div *ngIf="form.controls['date_release'].errors['forbiddenDate']">Debe ser igual o mayor a la fecha actual.</div>
+      }
+    </div>
+    <!-- Fecha de revision -->
+    <div class="form-field field-disabled">
+      <label>Fecha de Revisión</label>
+      <input type="date" formControlName="date_revision" class="input-disabled" />
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button
+      class="btn btn-main btn-secondary"
+      type="reset"
+      [class.disabled]="form.pristine"
+      (click)="onReset($event)"
+    >
+      Reiniciar
+    </button>
+    <button
+      class="btn btn-main btn-primary"
+      type="submit"
+      [class.disabled]="form.invalid || form.pristine"
+    >
+      Editar
+    </button>
+  </div>
+</form>

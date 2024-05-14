@@ -39,6 +39,11 @@ export class ProductTableComponent {
         this.selectedProduct = null;
       }
     });
+
+    // Listener to close menu when scrolling
+    this.renderer.listen('window', 'scroll', () => {
+      this.selectedProduct = null;
+    });
   }
 
   toggleMenu(product: Product, target: EventTarget | null) {
@@ -51,7 +56,7 @@ export class ProductTableComponent {
 
   onEditProduct(product: Product) {
     this.selectedProduct = null;
-    this.editProduct.emit(product);
+    this.editProduct.emit(product.id);
   }
 
   onDeleteProduct(product: Product) {
@@ -60,6 +65,7 @@ export class ProductTableComponent {
   }
 
   onPageChange(page: number) {
+    this.selectedProduct = null;
     this.productService.changePage(page);
   }
 

@@ -17,6 +17,11 @@
   margin: 1em 0em 1em 0em;
   padding: 1em 0.5em;
 
+  &.disabled {
+    background-color: #eee;
+    cursor: not-allowed;
+  }
+
   @media (max-width: 500px) {
     width: 100%;
     max-width: 300px;
