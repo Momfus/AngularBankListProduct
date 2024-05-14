@@ -52,18 +52,19 @@ export class ProductService {
     this.isLoading.set(true);
 
     return this.http
-      .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
-      .pipe(
-        catchError((error) => {
-          this.isLoading.set(false);
-          return this.handleError(error);
-        }),
-        tap((products) => {
-          this.isLoading.set(false);
-          this.$productListAux.next(products);
-        }),
-        map((products) => this._createProductPage(products, perPage, page))
-      );
+    .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
+    .pipe(
+      catchError((error) => {
+        this.isLoading.set(false);
+        return this.handleError(error);
+      }),
+      tap((products) => {
+        this.isLoading.set(false);
+        this.$productListAux.next(products);
+      }),
+      map((products) => this._createProductPage(products, perPage, page)),
+      tap(() => this.isLoading.set(false))
+    );
   }
 
   public createProduct(product: Product): Observable<Product> {
@@ -148,6 +149,37 @@ export class ProductService {
     );
   }
 
+  public deleteProduct(productId: string): Observable<void> {
+    this.isLoading.set(true);
+
+    return this.http
+      .delete(`${this.BASE_URL}?id=${productId}`, { headers: this.headers, responseType: 'text' })
+      .pipe(
+        map(() => undefined),
+        catchError((error) => {
+          this.isLoading.set(false);
+          return this.handleError(error);
+        }),
+        tap(() => {
+          const currentProductList = this.$productListAux.getValue();
+          const index = currentProductList.findIndex(p => p.id === productId);
+          if (index !== -1) {
+            currentProductList.splice(index, 1);
+            this.$productListAux.next(currentProductList);
+          }
+        }),
+        tap(() => {
+          this.getProducts(
+            this.state.value.itemsPerPage,
+            this.state.value.page
+          ).subscribe();
+        }),
+        tap(() => {
+          this.isLoading.set(false);
+        })
+      );
+  }
+
   private _createProductPage(
     products: Product[],
     perPage: number,
@@ -179,7 +211,7 @@ export class ProductService {
     // @TODO: Implementar manejo de errores
     switch (errorRes.error.error.message) {
       default:
-        errorMessage = "This email does not exist";
+        errorMessage = errorRes.error;
         break;
     }
 
