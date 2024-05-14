@@ -27,6 +27,7 @@ export class ProductService {
   productListFiltered: Product[] = [];
 
   isLoading = signal(false);
+  isCheckingId = signal(false);
 
   headers = { authorId: environment.authId };
 
@@ -137,7 +138,20 @@ export class ProductService {
 
     this.state.next(updatedState);
   }
+
   public getState(): Observable<StateFilter> {
     return this.state.asObservable();
+  }
+
+  public verifyProductId(id: string): Observable<boolean> {
+    this.isCheckingId.set(true);
+    return this.http
+      .get<boolean>(`${this.BASE_URL}/verification?id=${id}`, { headers: this.headers })
+      .pipe(
+        catchError((error) => {
+          return this.handleError(error);
+        }),
+        tap(() => this.isCheckingId.set(false))
+      );
   }
 }

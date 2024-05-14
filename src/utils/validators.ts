@@ -8,3 +8,4 @@ export function releaseDateValidator(): ValidatorFn {
     return forbidden ? {forbiddenDate: {value: control.value}} : null;
   };
 }
+

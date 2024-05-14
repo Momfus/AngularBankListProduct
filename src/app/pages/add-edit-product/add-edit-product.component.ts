@@ -1,8 +1,8 @@
 import { CommonModule, formatDate } from "@angular/common";
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Subscription } from "rxjs";
+import { Observable, Subscription, map } from "rxjs";
 import { releaseDateValidator } from "../../../utils/validators";
 import { Product } from "../../models/product.model";
 import { ProductService } from "../../services/product.service";
@@ -21,11 +21,13 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
 
   private $releaseDateSubscription?: Subscription;
   readonly isLoading = this.productService.isLoading.asReadonly()
+  readonly isCheckingId = this.productService.isCheckingId.asReadonly()
 
   form = this.fb.group({
     id: [
       "",
       [Validators.required, Validators.minLength(3), Validators.maxLength(10)],
+      [this.checkProductIdNotTaken.bind(this)]
     ],
     name: [
       "",
@@ -106,5 +108,12 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
     });
   }
 
+
+  // add-edit-product.component.ts
+  checkProductIdNotTaken(control: AbstractControl): Observable<ValidationErrors | null> {
+    return this.productService.verifyProductId(control.value).pipe(
+      map(res => (res ? { idTaken: true } : null))
+    );
+  }
 
 }
