@@ -30,7 +30,6 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.$stateSub = this.productService.getState().subscribe((state) => {
       this.productService.getProducts(state.itemsPerPage, state.page).subscribe((productPage) => {
         this.productPage = productPage;
-        console.log('Product page', this.productPage);
       });
     });
   }

@@ -1,5 +1,6 @@
 import { Route } from "@angular/router";
 import { AddEditProductComponent } from "./add-edit-product.component";
+import { ProductGuard } from "../../guard/product-guard.guard";
 
 
 export const ADD_EDIT_ROUTES: Route[] = [
@@ -9,6 +10,7 @@ export const ADD_EDIT_ROUTES: Route[] = [
    },
    {
       path: ':id',
-      component: AddEditProductComponent
+      component: AddEditProductComponent,
+      canActivate: [ProductGuard]
    },
 ]
