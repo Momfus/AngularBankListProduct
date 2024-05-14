@@ -111,6 +111,21 @@ button.btn {
   }
 }
 
+.container-buttons {
+
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  button {
+    margin: 0.5em;
+  }
+
+  @media (max-width: 300px) {
+    flex-direction: column;
+  }
+}
 
 hr {
   border: none;
@@ -152,4 +167,5 @@ hr {
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
 

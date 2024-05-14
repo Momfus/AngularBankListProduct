@@ -4,17 +4,20 @@ import { Router } from '@angular/router';
 import { Product, ProductPage } from '../../models/product.model';
 import { Subscription } from 'rxjs';
 import { ProductTableModule } from '../../components/product-table/product-table.module';
+import { ModalConfirmationComponent } from '../../shared/modal-confirmation/modal-confirmation.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [ProductTableModule],
+  imports: [ProductTableModule, ModalConfirmationComponent],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
 })
 export class ProductListComponent implements OnInit, OnDestroy {
 
   readonly isLoaded = this.productService.isLoading.asReadonly()
+  showConfirmationDeleteModal = false;
+  productToDeleteAux!: Product;
 
   productPage: ProductPage = new ProductPage();
   private $stateSub!: Subscription;
@@ -49,10 +52,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/product', productId])
   }
 
-  onDeleteProduct(product: Product) {
-    this.productService.deleteProduct(product.id).subscribe({
+  onShowConfirmationDelteModal(product: Product) {
+    this.productToDeleteAux = product;
+    this.showConfirmationDeleteModal = true;
+  }
+
+  onDeleteProduct(productId: string) {
+    this.showConfirmationDeleteModal = false;
+
+    this.productService.deleteProduct(productId).subscribe({
       next: () => {
-        console.log('Product deleted', product);
         this.productService.changePage(1);
       },
       error: (error) => {

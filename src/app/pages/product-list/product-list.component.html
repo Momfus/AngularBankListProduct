@@ -1,3 +1,8 @@
+
+@if (showConfirmationDeleteModal) {
+  <app-modal-confirmation [product]="productToDeleteAux" (confirm)="onDeleteProduct($event)" (cancel)="showConfirmationDeleteModal = false"></app-modal-confirmation>
+}
+
 <div class="container">
   <div class="container-actions">
     <input
@@ -20,7 +25,7 @@
       [products]="productPage.products"
       [pagination]="productPage.pagination"
       (editProduct)="onEditProduct($event)"
-      (deleteProduct)="onDeleteProduct($event)"
+      (deleteProduct)="onShowConfirmationDelteModal($event)"
     ></app-product-table>
   </div>
 </div>
