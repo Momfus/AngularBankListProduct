@@ -4,6 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { releaseDateValidator } from "../../../utils/validators";
+import { Product } from "../../models/product.model";
+import { ProductService } from "../../services/product.service";
 
 @Component({
   selector: "app-add-edit-product",
@@ -14,8 +16,10 @@ import { releaseDateValidator } from "../../../utils/validators";
 })
 export class AddEditProductComponent implements OnInit, OnDestroy {
   productId: string | null = null;
+  today: string;
+
   private $releaseDateSubscription?: Subscription;
-  today: String;
+  readonly isLoading = this.productService.isLoading.asReadonly()
 
   form = this.fb.group({
     id: [
@@ -28,12 +32,16 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
     ],
     description: ["", [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
     logo: ["", Validators.required],
-    releaseDate: [new Date(), [Validators.required, releaseDateValidator()]],
-    reviewDate: [{ value: "", disabled: true }],
+    date_release: [formatDate(new Date(), 'yyyy-MM-dd', 'en-US'), [Validators.required, releaseDateValidator()]],
+    date_revision: [{ value: "", disabled: true }],
   });
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router) {
-    this.today = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private productService: ProductService) {
+    let todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    this.today = formatDate(todayDate, 'yyyy-MM-dd', 'en-US');
+    console.log(this.today);
+
   }
 
   ngOnInit(): void {
@@ -45,6 +53,7 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
     }
 
     this.subscribeToReleaseDateChanges();
+    this.form.get('date_release')?.setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en-US'));
   }
 
   ngOnDestroy(): void {
@@ -55,7 +64,23 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.form.valid) {
-      console.log(this.form.value);
+      const formValue = this.form.value;
+      const product: Product = {
+        id: formValue.id || '',
+        name: formValue.name || '',
+        description: formValue.description || '',
+        logo: formValue.logo || '',
+        date_release: new Date(formValue.date_release || Date.now()),
+        date_revision: new Date(formValue.date_revision || Date.now()),
+      };
+
+      this.productService.createProduct(product).subscribe({
+        next: () => {
+          this.productService.changePage(1);
+          this.router.navigate(['/home'])
+        },
+        error: (error) => console.error('Error al crear producto:', error)
+      });
     } else {
       console.error("Form is invalid");
     }
@@ -70,14 +95,15 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
    * When the releaseDate changes, set the reviewDate to be one year after the new releaseDate.
    */
   private subscribeToReleaseDateChanges(): void {
-    this.form.get("releaseDate")?.valueChanges.subscribe((val) => {
+    this.form.get("date_release")?.valueChanges.subscribe((val) => {
       if (val) {
-        let reviewDate = new Date(val);
-        reviewDate.setFullYear(reviewDate.getFullYear() + 1);
-        let formattedDate = reviewDate.toISOString().split('T')[0];
-        this.form.get("reviewDate")?.setValue(formattedDate);
+        let releaseDateParts = val.split('-').map(part => parseInt(part, 10));
+        let reviewDate = new Date(releaseDateParts[0] + 1, releaseDateParts[1] - 1, releaseDateParts[2]);
+        let formattedDate = formatDate(reviewDate, 'yyyy-MM-dd', 'en-US');
+        this.form.get("date_revision")?.setValue(formattedDate);
       }
     });
   }
+
 
 }

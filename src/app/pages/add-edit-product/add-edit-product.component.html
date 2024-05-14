@@ -1,3 +1,7 @@
+@if (isLoading()) {
+  <h1>LOADING...</h1>
+}
+
 @if(productId) {
 
 <h1>Edit product</h1>
@@ -63,16 +67,16 @@
       <!-- Fecha de liberación -->
       <div class="form-field">
         <label>Fecha de Liberación</label>
-        <input type="date" formControlName="releaseDate" [min]="today" />
-        @if (form.controls['releaseDate'].invalid && form.controls['releaseDate'].touched && !!form.controls['releaseDate'].errors) {
-          <div *ngIf="form.controls['releaseDate'].errors['required']">El campo es requerido.</div>
-          <div *ngIf="form.controls['releaseDate'].errors['forbiddenDate']">Debe ser igual o mayor a la fecha actual.</div>
+        <input type="date" formControlName="date_release" [min]="today" />
+        @if (form.controls['date_release'].invalid && form.controls['date_release'].touched && !!form.controls['date_release'].errors) {
+          <div *ngIf="form.controls['date_release'].errors['required']">El campo es requerido.</div>
+          <div *ngIf="form.controls['date_release'].errors['forbiddenDate']">Debe ser igual o mayor a la fecha actual.</div>
         }
       </div>
       <!-- Fecha de revision -->
       <div class="form-field">
         <label>Fecha de Revisión</label>
-        <input type="date" formControlName="reviewDate" />
+        <input type="date" formControlName="date_revision" />
       </div>
     </div>
 

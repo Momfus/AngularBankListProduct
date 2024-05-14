@@ -16,13 +16,17 @@
       <!-- Page Number buttons -->
       @if (pagination.totalPages > 1) {
         @for (page of generatePageNumbers(); track $index) {
-          <button
-            class="btn btn-action"
-            (click)="onPageNumberClick(page)"
-            [class.current-page]="page === pagination.currentPage"
-          >
-            {{ page }}
-          </button>
+          @if (page === '...') {
+            <span>...</span>
+          } @else {
+            <button
+              class="btn btn-action"
+              (click)="page !== '...' && onPageNumberClick(page)"
+              [class.current-page]="page === pagination.currentPage"
+            >
+              {{ page }}
+            </button>
+          }
         }
       }
 
@@ -42,7 +46,7 @@
   <!-- Selectable menu -->
   <div class="select-container">
     <select
-      [value]="pagination?.itemsPerPage"
+      [(ngModel)]="defaultPerPageValue"
       (change)="onItemsPerPageChange($event)"
     >
       @for (option of itemsPerPageOptions; track $index) {

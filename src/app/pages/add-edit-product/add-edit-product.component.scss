@@ -7,6 +7,10 @@
   color: $primary-color;
   position: relative;
 
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+
   .back-button {
     display: flex;
     align-items: center;
@@ -18,6 +22,18 @@
     border: none;
     color: $primary-color;
     cursor: pointer;
+
+    @media (max-width: 900px) {
+      position: static;
+      margin-bottom: 10px;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    @media (max-width: 900px) {
+      font-size: 1.5em;
+    }
   }
 }
 

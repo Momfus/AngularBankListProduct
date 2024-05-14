@@ -2,7 +2,9 @@ import { AbstractControl, ValidatorFn } from "@angular/forms";
 
 export function releaseDateValidator(): ValidatorFn {
   return (control: AbstractControl): {[key: string]: any} | null => {
-    const forbidden = new Date(control.value) < new Date();
-    return forbidden ? { 'forbiddenDate': {value: control.value} } : null;
+    let todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    const forbidden = control.value < todayDate;
+    return forbidden ? {forbiddenDate: {value: control.value}} : null;
   };
 }

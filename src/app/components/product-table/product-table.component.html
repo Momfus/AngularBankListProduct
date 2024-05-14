@@ -23,11 +23,11 @@
               <!-- Logo -->
               <td *ngIf="isScreenLarge" class="column-logo">
                 @if (product.logo) {
-                <img [src]="product.logo" alt="Logo" class="logo" />
+                  <img [src]="product.logo" alt="Logo" class="logo" (error)="product.logo=''" />
                 } @else {
-                <div class="logo-placeholder">
-                  {{ product.name | slice : 0 : 2 | uppercase }}
-                </div>
+                  <div class="logo-placeholder">
+                    {{ product.name | slice : 0 : 2 | uppercase }}
+                  </div>
                 }
               </td>
 
