@@ -21,6 +21,7 @@ export class EditProductFormComponent {
   readonly isLoading = this.productService.isLoading.asReadonly()
 
   today!: string;
+  initialProductValues!: Product;
 
   form = this.fb.group({
     id: [
@@ -59,7 +60,8 @@ export class EditProductFormComponent {
     this.subscribeToReleaseDateChanges();
     this.productService.getProductById(this.productId).subscribe({
       next: product => {
-        console.log(product);
+        this.setFormDefaultValue(product);
+        this.initialProductValues = product;
       },
     });
   }
@@ -90,10 +92,10 @@ export class EditProductFormComponent {
     if (this.form.pristine) {
       return;
     }
-    this.form.reset();
+
+    this.setFormDefaultValue(this.initialProductValues);
 
   }
-
 
   checkProductIdNotTaken(
     control: AbstractControl
@@ -102,6 +104,16 @@ export class EditProductFormComponent {
     return this.productService
       .verifyProductId(control.value)
       .pipe(map((res) => (res ? { idTaken: true } : null)));
+  }
+
+  setFormDefaultValue(product: Product) {
+    this.form.patchValue({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      logo: product.logo,
+      date_release: formatDate(product.date_release, "yyyy-MM-dd", "en-US"),
+    });
   }
 
   /**
