@@ -51,7 +51,7 @@ export class ProductTableComponent {
 
   onEditProduct(product: Product) {
     this.selectedProduct = null;
-    this.editProduct.emit(product);
+    this.editProduct.emit(product.id);
   }
 
   onDeleteProduct(product: Product) {
@@ -60,6 +60,7 @@ export class ProductTableComponent {
   }
 
   onPageChange(page: number) {
+    this.selectedProduct = null;
     this.productService.changePage(page);
   }
 
