@@ -6,8 +6,12 @@ import {
   BehaviorSubject,
   Observable,
   catchError,
+  concatMap,
+  delay,
   map,
+  mapTo,
   of,
+  switchMap,
   tap,
   throwError,
 } from "rxjs";
@@ -23,7 +27,7 @@ interface StateFilter {
 export class ProductService {
   BASE_URL = environment.baseUrl;
 
-  productListAux = new BehaviorSubject<Product[]>([]);
+  $productListAux = new BehaviorSubject<Product[]>([]);
   productListFiltered: Product[] = [];
 
   isLoading = signal(false);
@@ -42,8 +46,10 @@ export class ProductService {
     perPage: number = 5,
     page: number = 1
   ): Observable<ProductPage> {
-    if (this.productListAux.getValue().length > 0) {
-      return of(this._createProductPage(this.productListAux.getValue(), perPage, page));
+    if (this.$productListAux.getValue().length > 0) {
+      return of(
+        this._createProductPage(this.$productListAux.getValue(), perPage, page)
+      );
     }
 
     this.isLoading.set(true);
@@ -57,19 +63,18 @@ export class ProductService {
         }),
         tap((products) => {
           this.isLoading.set(false);
-          this.productListAux.next(products);
+          this.$productListAux.next(products);
         }),
         map((products) => this._createProductPage(products, perPage, page))
       );
   }
 
   public createProduct(product: Product): Observable<Product> {
-    if (this.productListAux.getValue().length === 0) {
+    if (this.$productListAux.getValue().length === 0) {
       this.getProducts().subscribe();
     }
 
     this.isLoading.set(true);
-
 
     return this.http
       .post<Product>(`${this.BASE_URL}`, product, { headers: this.headers })
@@ -80,9 +85,9 @@ export class ProductService {
         }),
         tap((newProduct) => {
           this.isLoading.set(false);
-          const currentProductList = this.productListAux.getValue();
+          const currentProductList = this.$productListAux.getValue();
           currentProductList.push(newProduct);
-          this.productListAux.next(currentProductList);
+          this.$productListAux.next(currentProductList);
           this.updateState(this.state.value);
           this.getProducts(
             this.state.value.itemsPerPage,
@@ -90,6 +95,33 @@ export class ProductService {
           ).subscribe();
         })
       );
+  }
+
+  public getProductById(id: string): Observable<Product> {
+
+    const loadProducts$ =
+      this.$productListAux.getValue().length === 0
+        ? this.getProducts().pipe(map(() => null))
+        : of(null);
+
+    return loadProducts$.pipe(
+      concatMap(() => {
+        this.isLoading.set(true);
+        const product = this.$productListAux
+          .getValue()
+          .find((p) => p.id === id);
+        if (!product) {
+          return throwError(() => new Error(`Product with id ${id} not found`));
+        }
+        return of(product).pipe(
+          tap(() => {
+            setTimeout(() => {
+              this.isLoading.set(false);
+            }, 1500); // Simulate the API call if it have a getProductById endpoint
+          })
+        );
+      })
+    );
   }
 
   private _createProductPage(
@@ -138,7 +170,7 @@ export class ProductService {
   public updateState(newState: Partial<StateFilter>): void {
     const updatedState = { ...this.state.value, ...newState };
     const totalPages = Math.ceil(
-      this.productListAux.getValue().length / updatedState.itemsPerPage
+      this.$productListAux.getValue().length / updatedState.itemsPerPage
     );
 
     if (updatedState.page > totalPages) {
@@ -155,7 +187,9 @@ export class ProductService {
   public verifyProductId(id: string): Observable<boolean> {
     this.isCheckingId.set(true);
     return this.http
-      .get<boolean>(`${this.BASE_URL}/verification?id=${id}`, { headers: this.headers })
+      .get<boolean>(`${this.BASE_URL}/verification?id=${id}`, {
+        headers: this.headers,
+      })
       .pipe(
         catchError((error) => {
           return this.handleError(error);

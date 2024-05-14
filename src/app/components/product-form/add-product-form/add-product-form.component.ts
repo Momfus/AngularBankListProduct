@@ -11,6 +11,7 @@ import { formatDate } from "@angular/common";
 import { releaseDateValidator } from "../../../../utils/validators";
 import { Observable, map } from "rxjs";
 import { Product } from "../../../models/product.model";
+import { setTodayDate } from "../../../../utils/helpers";
 
 @Component({
   selector: "app-add-product-form",
@@ -56,9 +57,7 @@ export class AddProductFormComponent implements OnInit {
     private fb: FormBuilder,
     private productService: ProductService
   ) {
-    let todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
-    this.today = formatDate(todayDate, 'yyyy-MM-dd', 'en-US');
+    this.today = setTodayDate();
   }
 
 

@@ -5,6 +5,7 @@ import { formatDate } from '@angular/common';
 import { releaseDateValidator } from '../../../../utils/validators';
 import { ProductService } from '../../../services/product.service';
 import { Observable, map } from 'rxjs';
+import { setTodayDate } from '../../../../utils/helpers';
 
 @Component({
   selector: 'app-edit-product-form',
@@ -14,10 +15,10 @@ import { Observable, map } from 'rxjs';
 })
 export class EditProductFormComponent {
 
-  @Input() productId: string | undefined;
+  @Input() productId!: string;
   @Output() submitForm: EventEmitter<Product> = new EventEmitter<Product>();
 
-  readonly isCheckingId = this.productService.isCheckingId.asReadonly();
+  readonly isLoading = this.productService.isLoading.asReadonly()
 
   today!: string;
 
@@ -50,20 +51,22 @@ export class EditProductFormComponent {
     private fb: FormBuilder,
     private productService: ProductService
   ) {
-    let todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
-    this.today = formatDate(todayDate, 'yyyy-MM-dd', 'en-US');
+    this.today = setTodayDate();
   }
 
 
   ngOnInit(): void {
     this.subscribeToReleaseDateChanges();
-    this.form.get('date_release')?.setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en-US'));
+    this.productService.getProductById(this.productId).subscribe({
+      next: product => {
+        console.log(product);
+      },
+    });
   }
 
   onSubmit(): void {
 
-    if (this.form.invalid || this.isCheckingId()) {
+    if (this.form.invalid ) {
       return;
     }
 
@@ -88,7 +91,6 @@ export class EditProductFormComponent {
       return;
     }
     this.form.reset();
-    this.form.get('date_release')?.setValue(this.today);
 
   }
 
