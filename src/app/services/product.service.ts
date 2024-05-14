@@ -26,6 +26,7 @@ export class ProductService {
 
   $productListAux = new BehaviorSubject<Product[]>([]);
   productListFiltered: Product[] = [];
+  isSearchActive = false;
 
   isLoading = signal(false);
   isCheckingId = signal(false);
@@ -41,30 +42,36 @@ export class ProductService {
 
   public getProducts(
     perPage: number = 5,
-    page: number = 1
+    page: number = 1,
   ): Observable<ProductPage> {
-    if (this.$productListAux.getValue().length > 0) {
+    if (this.$productListAux.getValue().length > 0 && !this.isSearchActive) {
       return of(
         this._createProductPage(this.$productListAux.getValue(), perPage, page)
+      );
+    }
+
+    if (this.isSearchActive) {
+      return of(
+        this._createProductPage(this.productListFiltered, perPage, page)
       );
     }
 
     this.isLoading.set(true);
 
     return this.http
-    .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
-    .pipe(
-      catchError((error) => {
-        this.isLoading.set(false);
-        return this.handleError(error);
-      }),
-      tap((products) => {
-        this.isLoading.set(false);
-        this.$productListAux.next(products);
-      }),
-      map((products) => this._createProductPage(products, perPage, page)),
-      tap(() => this.isLoading.set(false))
-    );
+      .get<Product[]>(`${this.BASE_URL}`, { headers: this.headers })
+      .pipe(
+        catchError((error) => {
+          this.isLoading.set(false);
+          return this.handleError(error);
+        }),
+        tap((products) => {
+          this.isLoading.set(false);
+          this.$productListAux.next(products);
+        }),
+        map((products) => this._createProductPage(products, perPage, page)),
+        tap(() => this.isLoading.set(false))
+      );
   }
 
   public createProduct(product: Product): Observable<Product> {
@@ -108,7 +115,9 @@ export class ProductService {
         tap((updatedProduct) => {
           this.isLoading.set(false);
           const currentProductList = this.$productListAux.getValue();
-          const index = currentProductList.findIndex(p => p.id === updatedProduct.id);
+          const index = currentProductList.findIndex(
+            (p) => p.id === updatedProduct.id
+          );
           if (index !== -1) {
             currentProductList[index] = updatedProduct;
             this.$productListAux.next(currentProductList);
@@ -123,7 +132,6 @@ export class ProductService {
   }
 
   public getProductById(id: string): Observable<Product> {
-
     const loadProducts$ =
       this.$productListAux.getValue().length === 0
         ? this.getProducts().pipe(map(() => null))
@@ -153,7 +161,10 @@ export class ProductService {
     this.isLoading.set(true);
 
     return this.http
-      .delete(`${this.BASE_URL}?id=${productId}`, { headers: this.headers, responseType: 'text' })
+      .delete(`${this.BASE_URL}?id=${productId}`, {
+        headers: this.headers,
+        responseType: "text",
+      })
       .pipe(
         map(() => undefined),
         catchError((error) => {
@@ -162,7 +173,7 @@ export class ProductService {
         }),
         tap(() => {
           const currentProductList = this.$productListAux.getValue();
-          const index = currentProductList.findIndex(p => p.id === productId);
+          const index = currentProductList.findIndex((p) => p.id === productId);
           if (index !== -1) {
             currentProductList.splice(index, 1);
             this.$productListAux.next(currentProductList);
@@ -175,9 +186,27 @@ export class ProductService {
           ).subscribe();
         }),
         tap(() => {
+          this.isSearchActive = false;
+          this.productListFiltered = [];
           this.isLoading.set(false);
         })
       );
+  }
+
+  public searchProducts(searchString: string): Observable<ProductPage> {
+    if (searchString === "") {
+      this.productListFiltered = [];
+      this.isSearchActive = false;
+    } else {
+      this.productListFiltered = this.$productListAux
+        .getValue()
+        .filter((product) =>
+          product.name.toLowerCase().includes(searchString.toLowerCase())
+        );
+      this.isSearchActive = true;
+    }
+
+    return this.getProducts(this.state.value.itemsPerPage, 1);
   }
 
   private _createProductPage(

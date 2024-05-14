@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ProductService } from '../../services/product.service';
 import { Router } from '@angular/router';
 import { Product, ProductPage } from '../../models/product.model';
@@ -14,6 +14,8 @@ import { ModalConfirmationComponent } from '../../shared/modal-confirmation/moda
   styleUrl: './product-list.component.scss'
 })
 export class ProductListComponent implements OnInit, OnDestroy {
+
+  @ViewChild('searchInput') searchInput!: ElementRef;
 
   readonly isLoaded = this.productService.isLoading.asReadonly()
   showConfirmationDeleteModal = false;
@@ -63,10 +65,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.productService.deleteProduct(productId).subscribe({
       next: () => {
         this.productService.changePage(1);
+        this.searchInput.nativeElement.value = '';
       },
       error: (error) => {
         console.error('Error deleting product', error);
       }
+    });
+  }
+
+  onSearch(searchString: string) {
+    this.productService.searchProducts(searchString).subscribe((productPage) => {
+      this.productPage = productPage;
     });
   }
 
