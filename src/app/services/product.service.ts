@@ -42,6 +42,10 @@ export class ProductService {
     perPage: number = 5,
     page: number = 1
   ): Observable<ProductPage> {
+    if (this.productListAux.getValue().length > 0) {
+      return of(this._createProductPage(this.productListAux.getValue(), perPage, page));
+    }
+    console.log('test > ');
     this.isLoading.set(true);
 
     return this.http
@@ -60,7 +64,12 @@ export class ProductService {
   }
 
   public createProduct(product: Product): Observable<Product> {
+    if (this.productListAux.getValue().length === 0) {
+      this.getProducts().subscribe();
+    }
+
     this.isLoading.set(true);
+
 
     return this.http
       .post<Product>(`${this.BASE_URL}`, product, { headers: this.headers })

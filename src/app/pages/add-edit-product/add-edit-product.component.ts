@@ -1,62 +1,35 @@
-import { CommonModule, formatDate } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Observable, Subscription, map } from "rxjs";
-import { releaseDateValidator } from "../../../utils/validators";
-import { Product } from "../../models/product.model";
+import { Subscription } from "rxjs";
 import { ProductService } from "../../services/product.service";
 import { SpinnerComponent } from "../../shared/spinner/spinner.component";
+import { ProductFormModule } from "../../components/product-form/product-form.module";
+import { Product } from "../../models/product.model";
 
 @Component({
   selector: "app-add-edit-product",
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
+  imports: [CommonModule, SpinnerComponent,  ProductFormModule],
   templateUrl: "./add-edit-product.component.html",
   styleUrl: "./add-edit-product.component.scss",
 })
 export class AddEditProductComponent implements OnInit, OnDestroy {
   productId: string | null = null;
-  today: string;
+  title:string = ''
 
   private $releaseDateSubscription?: Subscription;
   readonly isLoading = this.productService.isLoading.asReadonly()
-  readonly isCheckingId = this.productService.isCheckingId.asReadonly()
 
-  form = this.fb.group({
-    id: [
-      "",
-      [Validators.required, Validators.minLength(3), Validators.maxLength(10)],
-      [this.checkProductIdNotTaken.bind(this)]
-    ],
-    name: [
-      "",
-      [Validators.required, Validators.minLength(5), Validators.maxLength(100)],
-    ],
-    description: ["", [Validators.required, Validators.minLength(10), Validators.maxLength(200)]],
-    logo: ["", Validators.required],
-    date_release: [formatDate(new Date(), 'yyyy-MM-dd', 'en-US'), [Validators.required, releaseDateValidator()]],
-    date_revision: [{ value: "", disabled: true }],
-  });
-
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private productService: ProductService) {
-    let todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
-    this.today = formatDate(todayDate, 'yyyy-MM-dd', 'en-US');
-    console.log(this.today);
-
-  }
+  constructor(private route: ActivatedRoute, private router: Router, private productService: ProductService) {}
 
   ngOnInit(): void {
     this.productId = this.route.snapshot.paramMap.get("id");
     if (this.productId) {
-      console.log("Edit");
+      this.title = 'Editar Producto'
     } else {
-      console.log("New");
+      this.title = 'Formulario de Registro'
     }
-
-    this.subscribeToReleaseDateChanges();
-    this.form.get('date_release')?.setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en-US'));
   }
 
   ngOnDestroy(): void {
@@ -65,55 +38,24 @@ export class AddEditProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSubmit(): void {
-    if (this.form.valid) {
-      const formValue = this.form.value;
-      const product: Product = {
-        id: formValue.id || '',
-        name: formValue.name || '',
-        description: formValue.description || '',
-        logo: formValue.logo || '',
-        date_release: new Date(formValue.date_release || Date.now()),
-        date_revision: new Date(formValue.date_revision || Date.now()),
-      };
-
-      this.productService.createProduct(product).subscribe({
-        next: () => {
-          this.productService.changePage(1);
-          this.router.navigate(['/home'])
-        },
-        error: (error) => console.error('Error al crear producto:', error)
-      });
-    } else {
-      console.error("Form is invalid");
-    }
-  }
-
   onBack(): void {
     this.router.navigate(['/home']);
   }
 
-  /**
-   * Subscribe to changes in the releaseDate field of the form.
-   * When the releaseDate changes, set the reviewDate to be one year after the new releaseDate.
-   */
-  private subscribeToReleaseDateChanges(): void {
-    this.form.get("date_release")?.valueChanges.subscribe((val) => {
-      if (val) {
-        let releaseDateParts = val.split('-').map(part => parseInt(part, 10));
-        let reviewDate = new Date(releaseDateParts[0] + 1, releaseDateParts[1] - 1, releaseDateParts[2]);
-        let formattedDate = formatDate(reviewDate, 'yyyy-MM-dd', 'en-US');
-        this.form.get("date_revision")?.setValue(formattedDate);
-      }
+
+  onAddProduct(product: Product): void {
+
+    this.productService.createProduct(product).subscribe({
+      next: () => {
+        this.productService.changePage(1);
+        this.router.navigate(['/home'])
+      },
+      error: (error) => console.error('Error al crear producto:', error)
     });
   }
 
+  onEditProduct(product: Product): void {
 
-  // add-edit-product.component.ts
-  checkProductIdNotTaken(control: AbstractControl): Observable<ValidationErrors | null> {
-    return this.productService.verifyProductId(control.value).pipe(
-      map(res => (res ? { idTaken: true } : null))
-    );
   }
 
 }
