@@ -5,7 +5,6 @@ import {
   ValidationErrors,
   Validators,
 } from "@angular/forms";
-import { Router } from "@angular/router";
 import { ProductService } from "../../../services/product.service";
 import { formatDate } from "@angular/common";
 import { releaseDateValidator } from "../../../../utils/validators";
